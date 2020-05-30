@@ -11,11 +11,11 @@ if (
 ) {
     $database = new Medoo([
         'database_type' => 'mysql',
-        'database_name' => getenv('DB_NAME'),
-        'port' => getenv('DB_PORT'),
         'server' => getenv('DB_HOST'),
-        'username' => getenv('DB_USER'),
-        'password' => getenv('DB_PASS'),
+        'port' => getenv('DB_PORT'),
+        'database_name' => getenv('DB_DATABASE'),
+        'username' => getenv('DB_USERNAME'),
+        'password' => getenv('DB_PASSWORD'),
         'charset' => 'utf8'
     ]);
 } else {

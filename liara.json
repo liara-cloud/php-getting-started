@@ -1,4 +1,10 @@
 {
   "platform": "php",
-  "app": "php-starter"
+  "app": "php-starter",
+  "disks": [
+    {
+      "name": "disk1",
+      "mountTo": "files"
+    }
+  ]
 }
