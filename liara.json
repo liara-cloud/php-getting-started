@@ -1,3 +1,9 @@
 {
-    "platform": "php"    
+    "platform": "php",
+    "disks": [
+        {
+            "name": "disk",
+            "mountTo": "uploads"
+        }
+    ]
 }
