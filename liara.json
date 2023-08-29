@@ -1,8 +1,9 @@
 {
     "platform": "php",
+    "app": "php-sample",
     "disks": [
         {
-            "name": "disk",
+            "name": "data",
             "mountTo": "uploads"
         }
     ]
