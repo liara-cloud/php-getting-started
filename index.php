@@ -1,21 +1,28 @@
-<html lang="en">
+<?php
+$database_url = getenv("DATABASE_URL");
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./assets/css/app.css">
-    <title>Deployed to Liara</title>
-</head>
+if (!$database_url) {
+    die("تنظیمات اتصال به دیتابیس تعیین نشده‌اند.");
+}
 
-<body>
-    <h1>
-        Hooray!
-    </h1>
+$db_info = parse_url($database_url);
 
-    <canvas id="drawing_canvas"></canvas>
+$db_host = $db_info["host"];
+$db_port = $db_info["port"];
+$db_user = $db_info["user"];
+$db_pass = $db_info["pass"];
+$db_name = ltrim($db_info["path"], '/');
 
-    <script src="./assets/js/app.js"></script>
-</body>
+// اتصال به دیتابیس
+$conn = new mysqli($db_host, $db_user, $db_pass, $db_name, $db_port);
 
-</html>
+// بررسی اتصال
+if ($conn->connect_error) {
+    die("اتصال به دیتابیس ناموفق بود: " . $conn->connect_error);
+}
+
+echo "اتصال به دیتابیس با موفقیت برقرار شد.";
+
+// بستن اتصال
+$conn->close();
+?>
