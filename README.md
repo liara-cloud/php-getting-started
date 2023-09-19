@@ -19,7 +19,8 @@ $ liara deploy
 2.  [php.ini customization](https://github.com/liara-cloud/php-getting-started/tree/ini)
 3.  [Apply custom apache settings with .htaccess file](https://github.com/liara-cloud/php-getting-started/tree/htaccess)
 4.  [Disk setup](https://github.com/liara-cloud/php-getting-started/tree/diskSetup)
-5.  [Object Storage For Bucket In Liara](https://github.com/liara-cloud/php-getting-started/tree/object-storage)
+5.  [Object Storage In Liara](https://github.com/liara-cloud/php-getting-started/tree/object-storage)
+6.  [Email Server In Liara](https://github.com/liara-cloud/php-getting-started/tree/email-server)
 
 
 ## Documentation
