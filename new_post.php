@@ -1,6 +1,14 @@
 <?php
-// وارد کردن فایل database_conf.php برای اتصال به دیتابیس و ایجاد جدول
 include_once 'database_conf.php';
+
+// Start session
+session_start();
+
+if (!isset($_SESSION['user_id'])) {
+    // Redirect to login page if user is not logged in
+    header("Location: login.php");
+    exit();
+}
 ?>
 
 <!DOCTYPE html>

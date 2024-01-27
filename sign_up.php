@@ -4,9 +4,13 @@ require 'PHPMailer/PHPMailer.php';
 require 'PHPMailer/SMTP.php';
 require 'PHPMailer/Exception.php';
 
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\SMTP;
-use PHPMailer\PHPMailer\Exception;
+// Start session
+session_start();
+if (isset($_SESSION['user_id'])) {
+    // Redirect to login page if user is not logged in
+    header("Location: index.php");
+    exit();
+}
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $first_name = $_POST['first_name'];
@@ -14,18 +18,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['email'];
     $password = $_POST['password'];
 
-    // بررسی استانداردهای رمز عبور
+    // Check password requirements
     if (strlen($password) < 8 || !preg_match("#[0-9]+#", $password) || !preg_match("#[A-Z]+#", $password)) {
         echo "رمز عبور باید حداقل 8 کاراکتر شامل حروف بزرگ و اعداد باشد.";
         exit;
     }
-    // بررسی ایمیل تکراری
+
+    // Check if email already exists
     $check_email_query = "SELECT * FROM users WHERE email='$email'";
     $check_email_result = $conn->query($check_email_query);
     if ($check_email_result->num_rows > 0) {
         $email_error = "این ایمیل قبلاً استفاده شده است.";
     } else {
-        // ارسال ایمیل اگر ایمیل تکراری نبود
+        // Send email
         $mail = new PHPMailer(true);
         try {
             $mail->isSMTP();
@@ -36,32 +41,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             $mail->Port       = 587;
 
-            // ایجاد پیام
             $mail->setFrom('info@alinajmabadi.ir', 'alips');
             $mail->addAddress($email, $first_name . ' ' . $last_name);
             $mail->isHTML(true);
-            $mail->Subject = 'successfull login - Liara Blog on PHP';
-            $mail->Body    = 'Thank you for Registering!';
+            $mail->Subject = 'ثبت نام موفق - وبلاگ Liara در PHP';
+            $mail->Body    = 'با تشکر از ثبت نام شما!';
 
             $mail->send();
             echo 'ایمیل با موفقیت ارسال شد!';
         } catch (Exception $e) {
             echo "خطا در ارسال ایمیل: {$mail->ErrorInfo}";
         }
-        
-        // ذخیره اطلاعات کاربر در دیتابیس
-        $password = password_hash($password, PASSWORD_DEFAULT); // هش کردن رمز عبور
+
+        // Store user data in database
+        $password = password_hash($password, PASSWORD_DEFAULT); // Hash the password
         $sql = "INSERT INTO users (first_name, last_name, email, password)
-    VALUES ('$first_name', '$last_name', '$email', '$password')";
+                VALUES ('$first_name', '$last_name', '$email', '$password')";
+        if ($conn->query($sql) === TRUE) {
+            // Store user ID in session after successful registration
+            $_SESSION['user_id'] = $conn->insert_id;
 
-if ($conn->query($sql) === TRUE) {
-    echo "ثبت‌نام با موفقیت انجام شد!";
-} else {
-    echo "خطا: " . $sql . "<br>" . $conn->error;
-}
-
-}
-$conn->close();
+            // Redirect to new_post.php
+            header("Location: new_post.php");
+            exit();
+        } else {
+            echo "خطا: " . $sql . "<br>" . $conn->error;
+        }
+    }
 }
 ?>
 
