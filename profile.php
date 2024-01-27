@@ -3,6 +3,9 @@ session_start();
 
 // اگر کاربر لاگین نکرده باشد، به صفحه لاگین هدایت شود
 if (!isset($_SESSION['user_id'])) {
+    // Set return_to session variable to current page
+    $_SESSION['return_to'] = $_SERVER['PHP_SELF'];
+
     // Redirect to login page if user is not logged in
     header("Location: login.php");
     exit();

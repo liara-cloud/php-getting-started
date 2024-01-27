@@ -3,6 +3,11 @@ include_once 'users_db.php';
 
 // Start session
 session_start();
+if (isset($_SESSION['user_id'])) {
+    // Redirect to login page if user is not logged in
+    header("Location: index.php");
+    exit();
+}
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['email'];
@@ -20,10 +25,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['first_name'] = $row['first_name'];
             $_SESSION['last_name'] = $row['last_name'];
             $_SESSION['email'] = $row['email'];
-            
-            // Redirect to new_post.php
-            header("Location: new_post.php");
-            exit();
+
+            // Redirect based on return_to session variable
+            if (isset($_SESSION['return_to'])) {
+                $return_to = $_SESSION['return_to'];
+                unset($_SESSION['return_to']); // Clear the return_to session variable
+                header("Location: $return_to");
+                exit();
+            } else {
+                header("Location: dashboard.php");
+                exit();
+            }
         } else {
             echo "رمز عبور اشتباه است.";
         }

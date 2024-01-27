@@ -5,7 +5,7 @@ include_once 'database_conf.php';
 session_start();
 
 if (!isset($_SESSION['user_id'])) {
-    // Redirect to login page if user is not logged in
+    $_SESSION['return_to'] = $_SERVER['PHP_SELF'];
     header("Location: login.php");
     exit();
 }
