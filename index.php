@@ -39,7 +39,7 @@ if (isset($_SESSION['user_id'])) {
             echo "</div>";
         }
     } else {
-        echo "<p class='error-message'>هیچ پستی برای نمایش وجود ندارد.</p>";
+        echo "<p class='error-message'>No Posts to show.</p>";
     }
     ?>
 </div>

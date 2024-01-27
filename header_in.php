@@ -8,11 +8,15 @@
 </head>
 <body>
 
+<?php
+$current_page = basename($_SERVER['PHP_SELF']);
+?>
+
 <div class="navbar" id="navbar">
-    <a href="#" class="active">Home</a>
-    <a href="new_post.php">Add Post</a>
-    <a href="profile.php">Profile</a>
-    <a href="logout.php">Log Out</a>
+    <a href="dashboard.php" <?php if ($current_page == 'dashboard.php') echo 'class="active"'; ?>>Home</a>
+    <a href="new_post.php" <?php if ($current_page == 'new_post.php') echo 'class="active"'; ?>>Add Post</a>
+    <a href="profile.php" <?php if ($current_page == 'profile.php') echo 'class="active"'; ?>>Profile</a>
+    <a href="logout.php" >Logout</a>
     <a href="javascript:void(0);" class="icon" onclick="toggleNavbar()">
         <i class="fa fa-bars"></i>
     </a>
