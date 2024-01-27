@@ -19,6 +19,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['user_id'] = $row['id'];
             $_SESSION['first_name'] = $row['first_name'];
             $_SESSION['last_name'] = $row['last_name'];
+            $_SESSION['email'] = $row['email'];
             
             // Redirect to new_post.php
             header("Location: new_post.php");
