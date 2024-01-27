@@ -7,11 +7,14 @@ include_once 'database_conf.php';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>dashboard</title>
+    <title>وبلاگ</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>وبلاگ</h1>
 
+<?php include_once 'header_in.php'; ?>
+
+<div class="container">
     <?php
     // Database connection
     include_once 'database_conf.php';
@@ -23,13 +26,17 @@ include_once 'database_conf.php';
     if ($result->num_rows > 0) {
         // Output data of each row
         while($row = $result->fetch_assoc()) {
+            echo "<div class='post'>";
             echo "<h2>" . $row["title"]. "</h2>";
             echo "<p>" . $row["content"]. "</p>";
             echo "<img src='" . $row["image"]. "'><br><br>";
+            echo "</div>";
         }
     } else {
-        echo "هیچ پستی برای نمایش وجود ندارد.";
+        echo "<p class='error-message'>هیچ پستی برای نمایش وجود ندارد.</p>";
     }
     ?>
+</div>
+
 </body>
 </html>
