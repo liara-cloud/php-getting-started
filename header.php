@@ -16,7 +16,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
     <a href="index.php" <?php if ($current_page == 'index.php') echo 'class="active"'; ?>>Home</a>
     <a href="login.php" <?php if ($current_page == 'login.php') echo 'class="active"'; ?>>Login</a>
     <a href="sign_up.php" <?php if ($current_page == 'sign_up.php') echo 'class="active"'; ?>>Sign Up</a>
-    <a href="#" <?php if ($current_page == 'contact.php') echo 'class="active"'; ?>>Contact</a>
+    <a href="about.php" <?php if ($current_page == 'about.php') echo 'class="active"'; ?>>About Us</a>
     <a href="javascript:void(0);" class="icon" onclick="toggleNavbar()">
         <i class="fa fa-bars"></i>
     </a>
