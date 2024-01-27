@@ -5,7 +5,7 @@ include_once 'users_db.php';
 session_start();
 if (isset($_SESSION['user_id'])) {
     // Redirect to login page if user is not logged in
-    header("Location: index.php");
+    header("Location: dashboard.php");
     exit();
 }
 
@@ -63,6 +63,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <input type="submit" value="ورود">
     </form>
     
-    <p>اگر ثبت نام نکرده‌اید، <a href="signup.php">اینجا</a> را کلیک کنید.</p>
+    <p>اگر ثبت نام نکرده‌اید، <a href="sign_up.php">اینجا</a> را کلیک کنید.</p>
 </body>
 </html>

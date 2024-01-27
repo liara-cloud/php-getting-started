@@ -4,11 +4,15 @@ require 'PHPMailer/PHPMailer.php';
 require 'PHPMailer/SMTP.php';
 require 'PHPMailer/Exception.php';
 
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\Exception;
+
 // Start session
 session_start();
 if (isset($_SESSION['user_id'])) {
     // Redirect to login page if user is not logged in
-    header("Location: index.php");
+    header("Location: dashboard.php");
     exit();
 }
 
@@ -44,8 +48,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $mail->setFrom('info@alinajmabadi.ir', 'alips');
             $mail->addAddress($email, $first_name . ' ' . $last_name);
             $mail->isHTML(true);
-            $mail->Subject = 'ثبت نام موفق - وبلاگ Liara در PHP';
-            $mail->Body    = 'با تشکر از ثبت نام شما!';
+            $mail->Subject = 'welcome';
+            $mail->Body    = 'so proud, to having you!';
 
             $mail->send();
             echo 'ایمیل با موفقیت ارسال شد!';
@@ -60,10 +64,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($conn->query($sql) === TRUE) {
             // Store user ID in session after successful registration
             $_SESSION['user_id'] = $conn->insert_id;
+            $_SESSION['user_id'] = $row['id'];
+            $_SESSION['first_name'] = $row['first_name'];
+            $_SESSION['last_name'] = $row['last_name'];
+            $_SESSION['email'] = $row['email'];
 
             // Redirect to new_post.php
-            header("Location: new_post.php");
-            exit();
+            if (isset($_SESSION['return_to'])) {
+                $return_to = $_SESSION['return_to'];
+                unset($_SESSION['return_to']); // Clear the return_to session variable
+                header("Location: $return_to");
+                exit();
+            } else {
+                header("Location: dashboard.php");
+                exit();
+            }
         } else {
             echo "خطا: " . $sql . "<br>" . $conn->error;
         }
