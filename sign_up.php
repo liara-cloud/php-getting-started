@@ -19,43 +19,49 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo "رمز عبور باید حداقل 8 کاراکتر شامل حروف بزرگ و اعداد باشد.";
         exit;
     }
+    // بررسی ایمیل تکراری
+    $check_email_query = "SELECT * FROM users WHERE email='$email'";
+    $check_email_result = $conn->query($check_email_query);
+    if ($check_email_result->num_rows > 0) {
+        $email_error = "این ایمیل قبلاً استفاده شده است.";
+    } else {
+        // ارسال ایمیل اگر ایمیل تکراری نبود
+        $mail = new PHPMailer(true);
+        try {
+            $mail->isSMTP();
+            $mail->Host       = 'smtp.c1.liara.email';
+            $mail->SMTPAuth   = true;
+            $mail->Username   = 'sleepy_bell_81p32m';
+            $mail->Password   = '04428cb9-6922-48ab-8023-8595530e165d';
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port       = 587;
 
-    // ارسال ایمیل
-    $mail = new PHPMailer(true);
+            // ایجاد پیام
+            $mail->setFrom('info@alinajmabadi.ir', 'alips');
+            $mail->addAddress($email, $first_name . ' ' . $last_name);
+            $mail->isHTML(true);
+            $mail->Subject = 'successfull login - Liara Blog on PHP';
+            $mail->Body    = 'Thank you for Registering!';
 
-    try {
-        $mail->isSMTP();
-        $mail->Host       = 'smtp.c1.liara.email';
-        $mail->SMTPAuth   = true;
-        $mail->Username   = 'sleepy_bell_81p32m';
-        $mail->Password   = '04428cb9-6922-48ab-8023-8595530e165d';
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->Port       = 587;
-
-        // ایجاد پیام
-        $mail->setFrom('info@alinajmabadi.ir', 'alips');
-        $mail->addAddress($email, $first_name . ' ' . $last_name);
-        $mail->isHTML(true);
-        $mail->Subject = 'successfull login - Liara Blog on PHP';
-        $mail->Body    = 'Thank you for Registering!';
-
-        $mail->send();
-        echo 'ایمیل با موفقیت ارسال شد!';
-    } catch (Exception $e) {
-        echo "خطا در ارسال ایمیل: {$mail->ErrorInfo}";
-    }
-
-    // ذخیره اطلاعات کاربر در دیتابیس
-    $password = password_hash($password, PASSWORD_DEFAULT); // هش کردن رمز عبور
-    $sql = "INSERT INTO users (first_name, last_name, email, password)
+            $mail->send();
+            echo 'ایمیل با موفقیت ارسال شد!';
+        } catch (Exception $e) {
+            echo "خطا در ارسال ایمیل: {$mail->ErrorInfo}";
+        }
+        
+        // ذخیره اطلاعات کاربر در دیتابیس
+        $password = password_hash($password, PASSWORD_DEFAULT); // هش کردن رمز عبور
+        $sql = "INSERT INTO users (first_name, last_name, email, password)
     VALUES ('$first_name', '$last_name', '$email', '$password')";
 
-    if ($conn->query($sql) === TRUE) {
-        echo "ثبت‌نام با موفقیت انجام شد!";
-    } else {
-        echo "خطا: " . $sql . "<br>" . $conn->error;
-    }
-    $conn->close();
+if ($conn->query($sql) === TRUE) {
+    echo "ثبت‌نام با موفقیت انجام شد!";
+} else {
+    echo "خطا: " . $sql . "<br>" . $conn->error;
+}
+
+}
+$conn->close();
 }
 ?>
 
@@ -75,9 +81,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <label for="last_name">نام خانوادگی:</label><br>
         <input type="text" id="last_name" name="last_name" required><br><br>
         <label for="email">ایمیل:</label><br>
-        <input type="email" id="email" name="email" required><br><br>
+        <input type="email" id="email" name="email" required><br>
+        <span style="color: red;"><?php if(isset($email_error)) { echo $email_error; } ?></span><br><br>
         <label for="password">رمز عبور:</label><br>
-        <input type="password" id="password" name="password" required><br><br>
+        <input type="password" id="password" name="password" required><br>
+        <span style="color: red;"><?php if(isset($password_error)) { echo $password_error; } ?></span><br><br>
         <input type="submit" value="ثبت‌نام">
     </form>
 </body>
