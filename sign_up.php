@@ -23,16 +23,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = $_POST['password'];
 
     // Check password requirements
+    $password_valid = true;
     if (strlen($password) < 8 || !preg_match("#[0-9]+#", $password) || !preg_match("#[A-Z]+#", $password)) {
-        echo "رمز عبور باید حداقل 8 کاراکتر شامل حروف بزرگ و اعداد باشد.";
-        exit;
+        $password_error = "Password must be at least 8 characters including capital letters and numbers";
+        $password_valid = false;
+    }
+
+    // Clear password field if it's not valid
+    if (!$password_valid) {
+        $password = ""; // Clear password field
     }
 
     // Check if email already exists
     $check_email_query = "SELECT * FROM users WHERE email='$email'";
     $check_email_result = $conn->query($check_email_query);
     if ($check_email_result->num_rows > 0) {
-        $email_error = "این ایمیل قبلاً استفاده شده است.";
+        $email_error = "This email is already used.";
     } else {
         // Send email
         $mail = new PHPMailer(true);
@@ -48,39 +54,40 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $mail->setFrom('info@alinajmabadi.ir', 'alips');
             $mail->addAddress($email, $first_name . ' ' . $last_name);
             $mail->isHTML(true);
-            $mail->Subject = 'welcome';
-            $mail->Body    = 'so proud, to having you!';
+            $mail->Subject = 'Welcome to Liara PHP Blog';
+            $mail->Body    = 'So proud, to have you!';
 
             $mail->send();
-            echo 'ایمیل با موفقیت ارسال شد!';
+            echo 'Email successfully sent!';
         } catch (Exception $e) {
-            echo "خطا در ارسال ایمیل: {$mail->ErrorInfo}";
+            echo "Error sending email: {$mail->ErrorInfo}";
         }
 
-        // Store user data in database
-        $password = password_hash($password, PASSWORD_DEFAULT); // Hash the password
-        $sql = "INSERT INTO users (first_name, last_name, email, password)
-                VALUES ('$first_name', '$last_name', '$email', '$password')";
-        if ($conn->query($sql) === TRUE) {
-            // Store user ID in session after successful registration
-            $_SESSION['user_id'] = $conn->insert_id;
-            $_SESSION['user_id'] = $row['id'];
-            $_SESSION['first_name'] = $row['first_name'];
-            $_SESSION['last_name'] = $row['last_name'];
-            $_SESSION['email'] = $row['email'];
+        // Store user data in database if password is valid
+        if ($password_valid) {
+            $password = password_hash($password, PASSWORD_DEFAULT); // Hash the password
+            $sql = "INSERT INTO users (first_name, last_name, email, password)
+                    VALUES ('$first_name', '$last_name', '$email', '$password')";
+            if ($conn->query($sql) === TRUE) {
+                // Store user ID in session after successful registration
+                $_SESSION['user_id'] = $conn->insert_id;
+                $_SESSION['first_name'] = $first_name;
+                $_SESSION['last_name'] = $last_name;
+                $_SESSION['email'] = $email;
 
-            // Redirect to new_post.php
-            if (isset($_SESSION['return_to'])) {
-                $return_to = $_SESSION['return_to'];
-                unset($_SESSION['return_to']); // Clear the return_to session variable
-                header("Location: $return_to");
-                exit();
+                // Redirect to new_post.php
+                if (isset($_SESSION['return_to'])) {
+                    $return_to = $_SESSION['return_to'];
+                    unset($_SESSION['return_to']); // Clear the return_to session variable
+                    header("Location: $return_to");
+                    exit();
+                } else {
+                    header("Location: dashboard.php");
+                    exit();
+                }
             } else {
-                header("Location: dashboard.php");
-                exit();
+                echo "Error: " . $sql . "<br>" . $conn->error;
             }
-        } else {
-            echo "خطا: " . $sql . "<br>" . $conn->error;
         }
     }
 }
@@ -167,8 +174,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </head>
 <body>
     <?php include_once 'header.php'; ?>
-    <br></br>
-    <br></br>
+    <br><br>
     <form action="" method="post">
         <label for="first_name">First Name:</label><br>
         <input type="text" id="first_name" name="first_name" required><br><br>
@@ -178,7 +184,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <input type="email" id="email" name="email" required><br>
         <span style="color: red;"><?php if(isset($email_error)) { echo $email_error; } ?></span><br><br>
         <label for="password">Password:</label><br>
-        <input type="password" id="password" name="password" required><br>
+        <input type="password" id="password" name="password" value="<?php echo htmlspecialchars($password); ?>" required><br>
         <span style="color: red;"><?php if(isset($password_error)) { echo $password_error; } ?></span><br><br>
         <input type="submit" value="Sign Up">
     </form>
@@ -186,4 +192,3 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <p>Have an account? <a href="login.php">Login</a></p>
 </body>
 </html>
-
