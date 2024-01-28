@@ -1,12 +1,13 @@
 <?php
-// Database connection
-$servername = "localhost";
+
+$servername = "kilimanjaro.liara.cloud";
 $username = "root";
-$password = "";
-$dbname = "emam";
+$password = "0mwMn5vqreDcLq8AfsK3zvqN";
+$dbname = "musing_lovelace";
+$port = 31069;
 
 // Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
+$conn = new mysqli($servername, $username, $password, $dbname, $port);
 
 // Check connection
 if ($conn->connect_error) {
