@@ -4,7 +4,8 @@ require 'PHPMailer/PHPMailer.php';
 require 'PHPMailer/SMTP.php';
 require 'PHPMailer/Exception.php';
 
-$env = parse_ini_file('.env');
+// in development mode
+// $env = parse_ini_file('.env');
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
@@ -50,14 +51,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $mail = new PHPMailer(true);
             try {
                 $mail->isSMTP();
-                $mail->Host       = $env['MAIL_HOST'];
+                $mail->Host       = getenv('MAIL_HOST'); // $env['MAIL_HOST']; // IN DEVELOPMENT MODE
                 $mail->SMTPAuth   = true;
-                $mail->Username   = $env['MAIL_USER'];
-                $mail->Password   = $env['MAIL_PASS'];
+                $mail->Username   = getenv('MAIL_USER'); // $env['MAIL_USER']; // IN DEVELOPMENT MODE
+                $mail->Password   = getenv('MAIL_PASS'); // $env['MAIL_PASS']; // IN DEVELOPMENT MODE
                 $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-                $mail->Port       = $env['MAIL_PORT'];
+                $mail->Port       = getenv('MAIL_PORT'); // $env['MAIL_PORT']; // IN DEVELOPMENT MODE
 
-                $mail->setFrom($env['MAIL_FROM'], $env['MAIL_NAME']);
+                $mail->setFrom(getenv('MAIL_FROM'), getenv('MAIL_NAME')); // IN DEVELOPMENT MODE, USE --> $env
                 $mail->addAddress($email, $first_name . ' ' . $last_name);
                 $mail->isHTML(true);
                 $mail->Subject = 'Welcome to Liara PHP Blog';
@@ -105,7 +106,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ثبت‌نام</title>
+    <title>SignUp</title>
     <style>
         body {
             margin: 0;
@@ -135,7 +136,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             display: block;
             font-weight: bold;
             margin-bottom: 5px;
-            text-align: left; /* Right-align labels */
+            text-align: left; 
         }
 
         input[type="text"],

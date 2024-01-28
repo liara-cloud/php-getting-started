@@ -1,12 +1,13 @@
 <?php
 
-$env = parse_ini_file('.env');
+// IN DEVELOPMENT MODE, USE --> $env 
+// $env = parse_ini_file('.env');
 
-$servername = $env['DB_HOST'];
-$username   = $env['DB_USER'];;
-$password   = $env['DB_PASS'];
-$dbname     = $env['DB_NAME'];
-$port       = $env['DB_PORT'];
+$servername = getenv('DB_HOST'); // $env['DB_HOST']; 
+$username   = getenv('DB_USER'); // $env['DB_USER'];
+$password   = getenv('DB_PASS'); // $env['DB_PASS'];
+$dbname     = getenv('DB_NAME'); // $env['DB_NAME'];
+$port       = getenv('DB_PORT'); // $env['DB_PORT'];
 
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname, $port);
