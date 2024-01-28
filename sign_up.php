@@ -40,53 +40,56 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($check_email_result->num_rows > 0) {
         $email_error = "This email is already used.";
     } else {
-        // Send email
-        $mail = new PHPMailer(true);
-        try {
-            $mail->isSMTP();
-            $mail->Host       = 'smtp.c1.liara.email';
-            $mail->SMTPAuth   = true;
-            $mail->Username   = 'sleepy_bell_81p32m';
-            $mail->Password   = '04428cb9-6922-48ab-8023-8595530e165d';
-            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-            $mail->Port       = 587;
+        // Display password error message if not valid
+        if (!$password_valid) {
+            $password_error = "Password must be at least 8 characters including capital letters and numbers";
+        } else {
+            // Send email
+            $mail = new PHPMailer(true);
+            try {
+                $mail->isSMTP();
+                $mail->Host       = 'smtp.c1.liara.email';
+                $mail->SMTPAuth   = true;
+                $mail->Username   = 'sleepy_bell_81p32m';
+                $mail->Password   = '04428cb9-6922-48ab-8023-8595530e165d';
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+                $mail->Port       = 587;
 
-            $mail->setFrom('info@alinajmabadi.ir', 'alips');
-            $mail->addAddress($email, $first_name . ' ' . $last_name);
-            $mail->isHTML(true);
-            $mail->Subject = 'Welcome to Liara PHP Blog';
-            $mail->Body    = 'So proud, to have you!';
+                $mail->setFrom('info@alinajmabadi.ir', 'alips');
+                $mail->addAddress($email, $first_name . ' ' . $last_name);
+                $mail->isHTML(true);
+                $mail->Subject = 'Welcome to Liara PHP Blog';
+                $mail->Body    = 'So proud, to have you!';
 
-            $mail->send();
-            echo 'Email successfully sent!';
-        } catch (Exception $e) {
-            echo "Error sending email: {$mail->ErrorInfo}";
-        }
+                $mail->send();
+                echo 'Email successfully sent!';
 
-        // Store user data in database if password is valid
-        if ($password_valid) {
-            $password = password_hash($password, PASSWORD_DEFAULT); // Hash the password
-            $sql = "INSERT INTO users (first_name, last_name, email, password)
-                    VALUES ('$first_name', '$last_name', '$email', '$password')";
-            if ($conn->query($sql) === TRUE) {
-                // Store user ID in session after successful registration
-                $_SESSION['user_id'] = $conn->insert_id;
-                $_SESSION['first_name'] = $first_name;
-                $_SESSION['last_name'] = $last_name;
-                $_SESSION['email'] = $email;
+                // Store user data in database
+                $password = password_hash($password, PASSWORD_DEFAULT); // Hash the password
+                $sql = "INSERT INTO users (first_name, last_name, email, password)
+                        VALUES ('$first_name', '$last_name', '$email', '$password')";
+                if ($conn->query($sql) === TRUE) {
+                    // Store user ID in session after successful registration
+                    $_SESSION['user_id'] = $conn->insert_id;
+                    $_SESSION['first_name'] = $first_name;
+                    $_SESSION['last_name'] = $last_name;
+                    $_SESSION['email'] = $email;
 
-                // Redirect to new_post.php
-                if (isset($_SESSION['return_to'])) {
-                    $return_to = $_SESSION['return_to'];
-                    unset($_SESSION['return_to']); // Clear the return_to session variable
-                    header("Location: $return_to");
-                    exit();
+                    // Redirect to new_post.php
+                    if (isset($_SESSION['return_to'])) {
+                        $return_to = $_SESSION['return_to'];
+                        unset($_SESSION['return_to']); // Clear the return_to session variable
+                        header("Location: $return_to");
+                        exit();
+                    } else {
+                        header("Location: dashboard.php");
+                        exit();
+                    }
                 } else {
-                    header("Location: dashboard.php");
-                    exit();
+                    echo "Error: " . $sql . "<br>" . $conn->error;
                 }
-            } else {
-                echo "Error: " . $sql . "<br>" . $conn->error;
+            } catch (Exception $e) {
+                echo "Error sending email: {$mail->ErrorInfo}";
             }
         }
     }
@@ -174,6 +177,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </head>
 <body>
     <?php include_once 'header.php'; ?>
+    <br><br>
     <br><br>
     <form action="" method="post">
         <label for="first_name">First Name:</label><br>
