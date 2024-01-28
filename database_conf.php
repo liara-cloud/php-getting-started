@@ -1,10 +1,12 @@
 <?php
 
-$servername = "kilimanjaro.liara.cloud";
-$username = "root";
-$password = "0mwMn5vqreDcLq8AfsK3zvqN";
-$dbname = "musing_lovelace";
-$port = 31069;
+$env = parse_ini_file('.env');
+
+$servername = $env['DB_HOST'];
+$username   = $env['DB_USER'];;
+$password   = $env['DB_PASS'];
+$dbname     = $env['DB_NAME'];
+$port       = $env['DB_PORT'];
 
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname, $port);

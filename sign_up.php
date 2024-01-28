@@ -4,6 +4,8 @@ require 'PHPMailer/PHPMailer.php';
 require 'PHPMailer/SMTP.php';
 require 'PHPMailer/Exception.php';
 
+$env = parse_ini_file('.env');
+
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
@@ -48,14 +50,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $mail = new PHPMailer(true);
             try {
                 $mail->isSMTP();
-                $mail->Host       = 'smtp.c1.liara.email';
+                $mail->Host       = $env['MAIL_HOST'];
                 $mail->SMTPAuth   = true;
-                $mail->Username   = 'sleepy_bell_81p32m';
-                $mail->Password   = '04428cb9-6922-48ab-8023-8595530e165d';
+                $mail->Username   = $env['MAIL_USER'];
+                $mail->Password   = $env['MAIL_PASS'];
                 $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-                $mail->Port       = 587;
+                $mail->Port       = $env['MAIL_PORT'];
 
-                $mail->setFrom('info@alinajmabadi.ir', 'alips');
+                $mail->setFrom($env['MAIL_FROM'], $env['MAIL_NAME']);
                 $mail->addAddress($email, $first_name . ' ' . $last_name);
                 $mail->isHTML(true);
                 $mail->Subject = 'Welcome to Liara PHP Blog';
