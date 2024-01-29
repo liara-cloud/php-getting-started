@@ -51,14 +51,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $mail = new PHPMailer(true);
             try {
                 $mail->isSMTP();
-                $mail->Host       = getenv('MAIL_HOST'); // $env['MAIL_HOST']; // IN DEVELOPMENT MODE
-                $mail->SMTPAuth   = true;
-                $mail->Username   = getenv('MAIL_USER'); // $env['MAIL_USER']; // IN DEVELOPMENT MODE
-                $mail->Password   = getenv('MAIL_PASS'); // $env['MAIL_PASS']; // IN DEVELOPMENT MODE
-                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-                $mail->Port       = getenv('MAIL_PORT'); // $env['MAIL_PORT']; // IN DEVELOPMENT MODE
+                $mail->Host     = $env['MAIL_HOST'];
+                $mail->Username = $env['MAIL_USER'];
+                $mail->Password = $env['MAIL_PASS'];
+                $mail->Port     = $env['MAIL_PORT'];
+                $mail->setFrom($env['MAIL_FROM'], $env['MAIL_NAME']); 
 
-                $mail->setFrom(getenv('MAIL_FROM'), getenv('MAIL_NAME')); // IN DEVELOPMENT MODE, USE --> $env
+                // // IN PRODUCTION MODE, USE THIS
+                // $mail->Host     = getenv('MAIL_HOST');
+                // $mail->Username = getenv('MAIL_USER');
+                // $mail->Password = getenv('MAIL_PASS');
+                // $mail->Port     = getenv('MAIL_PORT');
+                // $mail->setFrom(getenv('MAIL_FROM'), getenv('MAIL_NAME')); 
+
+                $mail->SMTPAuth   = true;
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
                 $mail->addAddress($email, $first_name . ' ' . $last_name);
                 $mail->isHTML(true);
                 $mail->Subject = 'Welcome to Liara PHP Blog';
