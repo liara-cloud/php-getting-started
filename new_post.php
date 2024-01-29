@@ -1,5 +1,9 @@
 <?php
+
 include_once 'database_conf.php';
+use Aws\S3\S3Client;
+use Aws\S3\Exception\S3Exception;
+require 'vendor/autoload.php'; 
 
 // Start session
 session_start();
@@ -16,46 +20,76 @@ function redirectTo($location) {
     exit();
 }
 
+// IN DEVELOPMENT MODE, USE THIS
+$env = parse_ini_file('.env');
+$bucket   = $env['LIARA_BUCKET_NAME'];
+$key      = $env['LIARA_ACCESS_KEY'];
+$secret   = $env['LIARA_SECRET_KEY'];
+$region   = $env['LIARA_REGION'];
+$endpoint = $env['LIARA_ENDPOINT']; 
+
+// // IN PRODUCTION MODE, USE THIS
+// $env = parse_ini_file('.env');
+// $bucket   = getemv('LIARA_BUCKET_NAME');
+// $key      = getemv('LIARA_ACCESS_KEY');
+// $secret   = getemv('LIARA_SECRET_KEY');
+// $region   = getemv('LIARA_REGION');
+// $endpoint = getemv('LIARA_ENDPOINT'); 
+
+// Create an S3Client
+$s3 = new S3Client([
+    'version' => 'latest',
+    'region' => $region,
+    'credentials' => [
+        'key' => $key,
+        'secret' => $secret,
+    ],
+    'endpoint' => $endpoint, 
+]);
+
 // Handle file upload and form submission
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $title = mysqli_real_escape_string($conn, $_POST['title']);
-    $content = mysqli_real_escape_string($conn, $_POST['content']);
+    $title = $_POST['title'];
+    $content = $_POST['content'];
     $imageFileType = strtolower(pathinfo($_FILES["image"]["name"], PATHINFO_EXTENSION));
-    
-    // Generate unique file name using current timestamp
-    $upload_dir = "uploads/";
-    $target_file = $upload_dir . time() . '.' . $imageFileType;
 
-    // Check if uploads directory exists, if not, create it
-    if (!file_exists($upload_dir)) {
-        mkdir($upload_dir, 0777, true);
-    }
-
-    // Check file size (limit to 5MB)
-    if ($_FILES["image"]["size"] > 5000000) {
-        echo "Sorry, your file is too large.";
     // Allow certain file formats
-    } elseif($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" && $imageFileType != "gif") {
+    if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" && $imageFileType != "gif") {
         echo "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
-    // if everything is ok, try to upload file
-    } elseif (move_uploaded_file($_FILES["image"]["tmp_name"], $target_file)) {
-        // File uploaded successfully, now insert data into database
-        $image = mysqli_real_escape_string($conn, $target_file);
-
-        // Insert post into database
-        $sql = "INSERT INTO posts (title, content, image)
-        VALUES ('$title', '$content', '$image')";
-
-        if ($conn->query($sql) === TRUE) {
-            // Redirect to index.php after successful post submission
-            redirectTo("index.php");
-        } else {
-            echo "Error: " . $sql . "<br>" . $conn->error;
-        }
     } else {
-        echo "Sorry, there was an error uploading your file.";
+        // Upload image to S3
+        $keyName = time() . '.' . $imageFileType; // Unique key name
+        $target_file = $_FILES["image"]["tmp_name"];
+        try {
+            $result = $s3->putObject([
+                'Bucket' => $bucket,
+                'Key'    => $keyName,
+                'Body'   => fopen($target_file, 'rb'),
+                'ACL'    => 'public-read', // Set ACL to public-read for public access
+            ]);
+
+            // File uploaded successfully, now insert data into database
+            $imageUrl = $result['ObjectURL']; // Get image URL from S3 response
+
+            $title = mysqli_real_escape_string($conn, $_POST['title']);
+            $content = mysqli_real_escape_string($conn, $_POST['content']);
+            $image = mysqli_real_escape_string($conn, $imageUrl);
+            
+            $sql = "INSERT INTO posts (title, content, image)
+            VALUES ('$title', '$content', '$image')";
+            
+            if ($conn->query($sql) === TRUE) {
+                // Redirect to index.php after successful post submission
+                redirectTo("index.php");
+            } else {
+                echo "Error: " . $sql . "<br>" . $conn->error;
+            }
+            echo "Image uploaded successfully: $imageUrl";
+        } catch (S3Exception $e) {
+            echo "Error uploading image: " . $e->getMessage();
+            }
+        }
     }
-}
 ?>
 
 <!DOCTYPE html>
@@ -160,3 +194,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
 </body>
 </html>
+
