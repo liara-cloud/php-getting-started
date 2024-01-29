@@ -186,7 +186,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <textarea id="content" name="content" rows="6" required></textarea> <!-- Set rows for textarea -->
             </div>
             <div class="form-group">
-                <label for="image">Choose Image (Maximum: 5M):</label>
+                <label for="image">Choose Image (We are Using S3 Buckets 😎):</label>
                 <input type="file" id="image" name="image" required>
             </div>
             <input type="submit" value="Publish 🔥">
