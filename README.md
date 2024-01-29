@@ -28,3 +28,4 @@ cp .env.example .env # if you're using Winodws, just rename .env.example file to
 - Send Email Using SMTP Access
 - Add New Post Including Images
 - Display Profile Page
+- Generate Random Posts without Logging in
