@@ -16,21 +16,21 @@ if (!$conn) {
     die("Connection failed: " . mysqli_connect_error());
 }
 
-// Loop through each post and insert into the database
-foreach ($posts as $post) {
-    $title = mysqli_real_escape_string($conn, $post['title']);
-    $content = mysqli_real_escape_string($conn, $post['content']);
-    $image = mysqli_real_escape_string($conn, $post['image']);
+// Select a random post from the array
+$random_post = $posts[array_rand($posts)];
 
-    // Insert post into database
-    $sql = "INSERT INTO posts (title, content, image) VALUES ('$title', '$content', '$image')";
+$title = mysqli_real_escape_string($conn, $random_post['title']);
+$content = mysqli_real_escape_string($conn, $random_post['content']);
+$image = mysqli_real_escape_string($conn, $random_post['image']);
 
-    if ($conn->query($sql) === TRUE) {
-        echo "New post inserted successfully: $title<br>";
-        redirectTo("index.php");
-    } else {
-        echo "Error inserting post: " . $conn->error . "<br>";
-    }
+// Insert post into database
+$sql = "INSERT INTO posts (title, content, image) VALUES ('$title', '$content', '$image')";
+
+if ($conn->query($sql) === TRUE) {
+    echo "New post inserted successfully: $title<br>";
+    redirectTo("index.php");
+} else {
+    echo "Error inserting post: " . $conn->error . "<br>";
 }
 
 // Close database connection
