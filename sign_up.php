@@ -51,18 +51,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $mail = new PHPMailer(true);
             try {
                 $mail->isSMTP();
-                $mail->Host     = $env['MAIL_HOST'];
-                $mail->Username = $env['MAIL_USER'];
-                $mail->Password = $env['MAIL_PASS'];
-                $mail->Port     = $env['MAIL_PORT'];
-                $mail->setFrom($env['MAIL_FROM'], $env['MAIL_NAME']); 
 
-                // // IN PRODUCTION MODE, USE THIS
-                // $mail->Host     = getenv('MAIL_HOST');
-                // $mail->Username = getenv('MAIL_USER');
-                // $mail->Password = getenv('MAIL_PASS');
-                // $mail->Port     = getenv('MAIL_PORT');
-                // $mail->setFrom(getenv('MAIL_FROM'), getenv('MAIL_NAME')); 
+                // // IN DEVELOPMENT MODE, USE THIS
+                // $mail->Host     = $env['MAIL_HOST'];
+                // $mail->Username = $env['MAIL_USER'];
+                // $mail->Password = $env['MAIL_PASS'];
+                // $mail->Port     = $env['MAIL_PORT'];
+                // $mail->setFrom($env['MAIL_FROM'], $env['MAIL_NAME']); 
+
+                // IN PRODUCTION MODE, USE THIS
+                $mail->Host     = getenv('MAIL_HOST');
+                $mail->Username = getenv('MAIL_USER');
+                $mail->Password = getenv('MAIL_PASS');
+                $mail->Port     = getenv('MAIL_PORT');
+                $mail->setFrom(getenv('MAIL_FROM'), getenv('MAIL_NAME')); 
 
                 $mail->SMTPAuth   = true;
                 $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
