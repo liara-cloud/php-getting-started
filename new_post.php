@@ -20,21 +20,20 @@ function redirectTo($location) {
     exit();
 }
 
-// IN DEVELOPMENT MODE, USE THIS
-$env = parse_ini_file('.env');
-$bucket   = $env['LIARA_BUCKET_NAME'];
-$key      = $env['LIARA_ACCESS_KEY'];
-$secret   = $env['LIARA_SECRET_KEY'];
-$region   = $env['LIARA_REGION'];
-$endpoint = $env['LIARA_ENDPOINT']; 
-
-// // IN PRODUCTION MODE, USE THIS
+// // IN DEVELOPMENT MODE, USE THIS
 // $env = parse_ini_file('.env');
-// $bucket   = getemv('LIARA_BUCKET_NAME');
-// $key      = getemv('LIARA_ACCESS_KEY');
-// $secret   = getemv('LIARA_SECRET_KEY');
-// $region   = getemv('LIARA_REGION');
-// $endpoint = getemv('LIARA_ENDPOINT'); 
+// $bucket   = $env['LIARA_BUCKET_NAME'];
+// $key      = $env['LIARA_ACCESS_KEY'];
+// $secret   = $env['LIARA_SECRET_KEY'];
+// $region   = $env['LIARA_REGION'];
+// $endpoint = $env['LIARA_ENDPOINT'];  
+
+// IN PRODUCTION MODE, USE THIS
+$bucket   = getenv('LIARA_BUCKET_NAME');
+$key      = getenv('LIARA_ACCESS_KEY');
+$secret   = getenv('LIARA_SECRET_KEY');
+$region   = getenv('LIARA_REGION');
+$endpoint = getenv('LIARA_ENDPOINT'); 
 
 // Create an S3Client
 $s3 = new S3Client([
@@ -80,7 +79,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             
             if ($conn->query($sql) === TRUE) {
                 // Redirect to index.php after successful post submission
-                redirectTo("index.php");
+                redirectTo("dashboard.php");
             } else {
                 echo "Error: " . $sql . "<br>" . $conn->error;
             }
