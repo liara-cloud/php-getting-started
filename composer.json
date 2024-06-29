@@ -1,0 +1,10 @@
+{
+    "require": {
+        "doctrine/dbal": "^3.0"
+    },
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
+    }
+}

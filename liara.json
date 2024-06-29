@@ -1,0 +1,10 @@
+{
+    "app": "my-web-app", 
+    "platform": "php",
+    "php": {
+        "version": "8.2"
+    },
+    "build": {
+        "location": "germany"
+    }
+}
