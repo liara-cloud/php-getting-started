@@ -1,13 +1,14 @@
 @font-face {
-    font-family: BeautifulPeople;
-    src: url('BeautifulPeople.ttf');
+    font-family: 'BeautifulPeople';
+    src: url('BeautifulPeople.ttf') format('truetype');
+    font-display: swap;
 }
 
 body {
     background-color: #2B333F;
     margin: 0;
     overflow: hidden;
-    font-family: BeautifulPeople;
+    font-family: 'BeautifulPeople', sans-serif;
 }
 
 h1 {
