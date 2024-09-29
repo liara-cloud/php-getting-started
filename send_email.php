@@ -31,7 +31,7 @@ try {
     $mail->Subject = 'Test Email';
     $mail->Body    = 'This is a test email sent using PHPMailer and SMTP.';
     $mail->AltBody = 'This is the plain text version of the email content.';
-    $mail->addCustomHeader('x-liara-tag', 'test-tag');
+    $mail->addCustomHeader('x-liara-tag', 'test-tag'); // use Liara Tags
 
 
     // Send the email
